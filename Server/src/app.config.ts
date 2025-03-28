@@ -4,6 +4,8 @@ import { WebSocketTransport } from "@colyseus/ws-transport";
 import { monitor } from "@colyseus/monitor";
 import { playground } from "@colyseus/playground";
 
+import express from "express";
+import { matchMaker } from "colyseus";
 // import { RedisDriver } from "@colyseus/redis-driver";
 // import { RedisPresence } from "@colyseus/redis-presence";
 
@@ -39,6 +41,15 @@ export default config({
         app.get("/", (req, res) => {
             res.send(`Instance ID => ${process.env.NODE_APP_INSTANCE ?? "NONE"}`);
         });
+        
+        app.post("/create-room", async (req, res) => {
+            try {
+              const room = await matchMaker.createRoom("my_room", {}); // Tạo phòng mới
+              res.json({ roomId: room.roomId });
+            } catch (e) {
+              res.status(500).json({ error: "Không thể tạo phòng" });
+            }
+          });
 
         /**
          * Bind @colyseus/monitor
