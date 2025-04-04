@@ -4,7 +4,6 @@ import { WebSocketTransport } from "@colyseus/ws-transport";
 import { monitor } from "@colyseus/monitor";
 import { playground } from "@colyseus/playground";
 
-import express from "express";
 import { matchMaker } from "colyseus";
 // import { RedisDriver } from "@colyseus/redis-driver";
 // import { RedisPresence } from "@colyseus/redis-presence";
@@ -12,12 +11,31 @@ import { matchMaker } from "colyseus";
 /**
  * Import your Room files
  */
+
+const roomsByLevel : { [level : number] : string} = {};
+
+async function createLevelRoom() {
+  for (let level = 1; level <= 10; level++){
+    try {
+      const room = await matchMaker.createRoom("level_room", { level });
+      roomsByLevel[level] = room.roomId;
+      console.log(`Room for level ${level} created with ID: ${room.roomId}`);
+  } catch (error) {
+      console.error(`Failed to create room for level ${level}:`, error);
+  }
+  }
+}
+
+
 import { MyRoom } from "./rooms/MyRoom";
 import auth from "./config/auth";
 import { LobbyRoom } from "colyseus";
+import { ChatRoom } from "./rooms/ChatRoom";
+import { LevelRoom } from "./levels/LevelRoom";
 
 export default config({
-    options: {
+  
+  options: {
         // devMode: true,
         // driver: new RedisDriver(),
         // presence: new RedisPresence(),
@@ -30,8 +48,10 @@ export default config({
          * Define your room handlers:
          */
         gameServer.define('my_room', MyRoom);
+        gameServer.define("chat_room", ChatRoom);
 
         gameServer.define('lobby', LobbyRoom);
+        gameServer.define("level_room", LevelRoom);
     },
 
     initializeExpress: (app) => {
@@ -42,15 +62,6 @@ export default config({
             res.send(`Instance ID => ${process.env.NODE_APP_INSTANCE ?? "NONE"}`);
         });
         
-        app.post("/create-room", async (req, res) => {
-            try {
-              const room = await matchMaker.createRoom("my_room", {}); // Tạo phòng mới
-              res.json({ roomId: room.roomId });
-            } catch (e) {
-              res.status(500).json({ error: "Không thể tạo phòng" });
-            }
-          });
-
         /**
          * Bind @colyseus/monitor
          * It is recommended to protect this route with a password.
@@ -66,9 +77,8 @@ export default config({
     },
 
 
-    beforeListen: () => {
-        /**
-         * Before before gameServer.listen() is called.
-         */
+    beforeListen: async () => {
+      await createLevelRoom();
+      console.log("✅ Đã tạo xong phòng test!");
     }
 });

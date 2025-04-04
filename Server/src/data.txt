@@ -1,0 +1,18 @@
+{
+  "levelName": "Ocean Quest",
+  "messages": 
+  {
+    "1": { "sender": "Alice", "content": "Hello everyone!", "parentId": null, "replies":
+        [
+            { "sender": "Bob", "content": "Hi Alice!", "parentId": "1", "replies": [] },
+            { "sender": "Charlie", "content": "This is great!", "parentId": "1", "replies": 
+                [
+                    { "sender": "Eve", "content": "I agree!", "parentId": "3", "replies": [] }
+                ]}
+        ]},
+    "4": { "sender": "Dave", "content": "Nice to meet you all!", "parentId": null, "replies": 
+    [
+        { "sender": "Eve", "content": "Replying to Dave!", "parentId": "4", "replies": [] }
+    ]}
+  }
+}
