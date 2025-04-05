@@ -13,7 +13,7 @@ export class ChatRoom extends Room<MyRoomState> {
 
     
   onCreate (options: any) {
-    this.setState(new MyRoomState());
+    this.state = new MyRoomState();
     this.autoDispose = false;
 
     this.onMessage("chat", (client, message: string) => {

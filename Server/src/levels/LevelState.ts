@@ -5,7 +5,7 @@ class Message extends Schema {
     @type("string") sender: string;
     @type("string") content: string;
     @type("number") timestamp: number;
-    @type("string") parentId: string | null; 
+    @type("string") parentId: string; 
     @type([Message]) replies = new ArraySchema<Message>();
 
     constructor(id: string, sender: string, content: string, parentId: string | null = null) {
@@ -42,8 +42,15 @@ class LevelState extends Schema {
 
         root2.replies.push(reply3);
 
+        // for (let i = 40; i <= 80; i++) {
+        //     const id = i.toString();
+        //     const rootI = new Message(id, "Thanh" + id, "Hello everyone" + id, null);
+        //     this.messages.set(rootI.id, rootI);
+        // }
+
         this.messages.set(root1.id, root1);
         this.messages.set(root2.id, root2);
+  
     }
 
     addMessage(sender: string, content: string, parentId: string | null = null) {
